@@ -9,8 +9,9 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ item.name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted"></h6>
+                    <p class="card-text">리뷰: {{ item.reviews_count }} ({{ item.average_point }})</p>
                     <p class="card-text">음식점 설명</p>
-                    <a href="{% url 'restaurant-detail' %}?id={{ item.id }}" class="card-link">자세히</a>
+                    <a href="{% url 'restaurant-detail' id=item.id %}" class="card-link">자세히</a>
                     <a href="{% url 'restaurant-update' %}?id={{ item.id }}" class="card-link">수정</a>
                 </div>
             </div>

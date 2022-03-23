@@ -1,6 +1,15 @@
 from django.forms import ModelForm
-from third.models import Restaurant
+from django import forms
+from third.models import Restaurant, Review
 from django.utils.translation import gettext_lazy as _
+
+REVIEW_POINT_CHOICES=(
+    ('1',1),
+    ('2',2),
+    ('3',3),
+    ('4',4),
+    ('5',5),
+)
 
 class RestaurantForm(ModelForm):
     class Meta:
@@ -19,4 +28,21 @@ class RestaurantForm(ModelForm):
                 'max_length': _('이름을 30자 이하로 해주세요.')
             }
         }
-    
+
+
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Review
+        fields = ['point','comment','restaurant']
+        labels = {
+            'point':_('평점'),
+            'comment':_('코멘트'),
+        }
+        help_texts = {
+            'point':_('평점을 입력해주세요.'),
+            'comment':_('코멘트를 입력해주세요.')
+        }
+        widgets = {
+            'restaurant': forms.HiddenInput(),
+            'point': forms.Select(choices=REVIEW_POINT_CHOICES),
+        }    

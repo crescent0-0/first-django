@@ -1,0 +1,31 @@
+{% extends 'third/base.html' %}
+{% load static %}
+{% block content%}
+<div class="container">
+    {% for review in reviews %}
+        <div class="col-sm-12">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review.restaurant.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ review.restaurant.address}}</h6>
+                    <p class="card-text">{{ review.point }}점 : {{ review.comment }}</p>
+                </div> 
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <div class="pagination">
+                <span class="step-links text-center" style="width:100%;">
+                    {% for p in page %}
+                        <a href="?page={{ p }}">{{ p }}</a>
+                    {% endfor %}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock  %}

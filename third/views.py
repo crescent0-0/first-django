@@ -1,13 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
+from django.db.models import Count, Avg
 
-from third.forms import RestaurantForm
-from third.models import Restaurant
+from third.forms import RestaurantForm, ReviewForm
+from third.models import Restaurant, Review
 
 # Create your views here.
 def list(request):
-    restaurants = Restaurant.objects.all()
+    restaurants = Restaurant.objects.all().annotate(reviews_count=Count('review')).annotate(average_point=Avg('review__point'))
     paginator = Paginator(restaurants, 3)
     
     page = request.GET.get('page')
@@ -47,12 +48,18 @@ def update(request):
     
     return HttpResponseRedirect('/third/list/')
 
-def detail(request):
-    if 'id' in request.GET:
-        item = get_object_or_404(Restaurant, pk=request.GET.get('id'))
-        return render(request, 'third/detail.html', { 'item':item })
+def detail(request, id):
+    if 'id' is not None:
+        item = get_object_or_404(Restaurant, pk=id)
+        reviews = Review.objects.filter(restaurant=item).all()
+        context={
+            'item': item,
+            'reviews': reviews,
+        }
+        
+        return render(request, 'third/detail.html', context)
     
-    return HttpResponseRedirect('third/list/')
+    return HttpResponseRedirect('/third/list/')
 
 
 def delete(request):
@@ -61,3 +68,44 @@ def delete(request):
         item.delete()
     
     return HttpResponseRedirect('/third/list/')
+
+
+def review_create(request, restaurant_id):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            new_item = form.save()
+        return redirect('restaurant-detail', id=restaurant_id)
+    
+    item=get_object_or_404(Restaurant, pk=restaurant_id)
+    form = ReviewForm(initial={'restaurant': item})
+    
+    context ={
+        'item': item,
+        'form': form,
+    }
+    return render(request, 'third/review_create.html',context)
+
+
+def review_delete(request, restaurant_id, review_id):
+    item = get_object_or_404(Review, pk=review_id)
+    item.delete()
+    
+    return redirect('restaurant-detail',id=restaurant_id)
+
+
+def review_list(request):
+    #reviews = Review.objects.all().order_by('-created_at')                   # join X : 리뷰 갯수만큼 쿼리가 요청됨
+    reviews = Review.objects.all().select_related().order_by('-created_at')   # join O : 한번의 쿼리만 보내짐
+    paginator = Paginator(reviews,3)
+    
+    page = request.GET.get('page')
+    items = paginator.get_page(page)
+    pages = range(1,paginator.num_pages+1);
+    
+    context = {
+        'reviews': items,
+        'page': pages,
+    }
+    
+    return render(request,'third/review_list.html',context)
