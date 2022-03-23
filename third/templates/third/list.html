@@ -10,12 +10,39 @@
                     <h5 class="card-title">{{ item.name }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted"></h6>
                     <p class="card-text">음식점 설명</p>
-                    <a href="#" class="card-link">자세히</a>
-                    <a href="#" class="card-link">수정</a>
+                    <a href="{% url 'restaurant-detail' %}?id={{ item.id }}" class="card-link">자세히</a>
+                    <a href="{% url 'restaurant-update' %}?id={{ item.id }}" class="card-link">수정</a>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <div class="pagination">
+                <span class="step-links text-center" style="width:100%;">
+                    {% for p in page %}
+                        <a href="?page={{ p }}">{{ p }}</a>
+                    {% endfor %}
+
+                    {% comment %} {% if restaurants.has_previous %}  <!-- has_previous : 필터함수-->
+                        <a href="?page=1">&laquo;</a>
+                        <a href="?page={{ restaurants.previous_page_number }}">{{ restaurants.previous_page_number }}</a>
+                    {% endif %}
+
+                    <span class="current">
+                        {{ restaurants.number }}
+                    </span>
+
+                    {% if restaurants.has_next %}  <!-- has_next : 필터함수-->
+                        <a href="?page={{ restaurants.next_page_number }}">{{ restaurants.next_page_number }}</a>
+                        <a href="?page={{ restaurants.paginator.num_pages }}">{{ restaurants.paginator.num_pages }}</a>
+                    {% endif %} {% endcomment %}
+                </span>
+            </div>
+
+        </div>
+    </div>
 </div>
 {% endblock %}
