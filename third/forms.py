@@ -1,3 +1,4 @@
+from tkinter import Widget
 from django.forms import ModelForm
 from django import forms
 from third.models import Restaurant, Review
@@ -14,21 +15,40 @@ REVIEW_POINT_CHOICES=(
 class RestaurantForm(ModelForm):
     class Meta:
         model = Restaurant
-        fields = ['name','address']
+        fields = ['name','address', 'image', 'password']
         labels = {
             'name':_('이름'),
             'address':_('주소'),
+            'image':_('이미지 url'),
+            'password':_('게시물 비밀번호')
         }
         help_texts = {
             'name':_('이름을 입력해주세요.'),
-            'address':_('주소를 입력해주세요.')
+            'address':_('주소를 입력해주세요.'),
+            'image':_('이미지 url을 입력해주세요'),
+            'password':_('게시물 비밀번호를 입력해주세요.')
+        }
+        widgets = {
+            'password': forms.PasswordInput()
         }
         error_messages={
             'name': {
                 'max_length': _('이름을 30자 이하로 해주세요.')
+            },
+            'image': {
+                'max_length': _('image url을 500자 이하로 해주세요.')
+            },
+            'password': {
+                'max_length': _('게시물 비밀번호를 20자 이하로 해주세요.')
             }
         }
 
+
+class UpdateRestaurantForm(RestaurantForm):
+    class Meta:
+        model = Restaurant
+        exclude = ['password']
+        
 
 class ReviewForm(ModelForm):
     class Meta:

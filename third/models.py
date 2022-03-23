@@ -5,6 +5,10 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=30)
     address = models.CharField(max_length=200)
     
+    # 필드 추가 : default, null속성 필수(기존 삽입된 데이터와 충돌이 생기는 것을 방지하기 위해)
+    password = models.CharField(max_length=20, default=None, null=True)
+    image = models.CharField(max_length=500, default=None, null=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
