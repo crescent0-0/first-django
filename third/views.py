@@ -50,6 +50,7 @@ def update(request):
     
     return HttpResponseRedirect('/third/list/')
 
+
 def detail(request, id):
     if 'id' is not None:
         item = get_object_or_404(Restaurant, pk=id)
